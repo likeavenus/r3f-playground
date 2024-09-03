@@ -30,7 +30,7 @@ export class Visualizer {
     this.sound = new THREE.Audio(this.listener);
     this.loader = new THREE.AudioLoader();
 
-    this.analyzer = new THREE.AudioAnalyser(this.sound, 32);
+    this.analyzer = new THREE.AudioAnalyser(this.sound, 256);
   }
 
   async load(path) {
@@ -47,7 +47,7 @@ export class Visualizer {
   }
 
   update() {
-    const freq = Math.max(this.getFrequency() - 100, 0) / 100;
+    const freq = Math.max(this.getFrequency() - 100, 0) / 50;
     this.mesh.material.uniforms[this.frequencyUniformName].value = freq;
 
     const freqUniform = this.mesh.material.uniforms[this.frequencyUniformName];
@@ -103,14 +103,9 @@ export const AudioVisualizer = ({ path }) => {
       meshRef.current.position.x = Math.sin(time) + 1;
       meshRef.current.position.z = Math.cos(time) + 1;
 
-      //   light.current.intensity =
-      //     Math.random() > 0.95
-      //       ? meshRef.current.material.uniforms["uAudioFrequency"].value * 20
-      //       : 0;
       light.current.intensity =
-        meshRef.current.material.uniforms["uAudioFrequency"].value + 1;
-      //   meshRef.current.material.uniforms["uAudioFrequency"].value * 10;
-      //   light.current.color =
+        meshRef.current.material.uniforms["uAudioFrequency"].value *
+        Math.floor(Math.random() * 10);
     }
   });
 
@@ -123,7 +118,7 @@ export const AudioVisualizer = ({ path }) => {
       args={[1, 64, 64]}
       position={[0, 2, 0]}
     >
-      <pointLight castShadow intensity={15} ref={light} color="white" />
+      <pointLight castShadow intensity={15} ref={light} color="purple" />
       <shaderMaterial
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
@@ -133,7 +128,6 @@ export const AudioVisualizer = ({ path }) => {
         ref={meshRef}
         scale={[1 + WIREFRAME_DELTA, 1 + WIREFRAME_DELTA, 1 + WIREFRAME_DELTA]}
       >
-        {/* <edgesGeometry attach="geometry" args={[geometry]} /> */}
         <sphereGeometry attach="geometry" />
         <shaderMaterial
           vertexShader={vertexShader}
@@ -142,14 +136,5 @@ export const AudioVisualizer = ({ path }) => {
         />
       </lineSegments>
     </Sphere>
-    // <mesh ref={meshRef}>
-    //   <boxGeometry args={[1, 1, 1]} />
-    //   <meshBasicMaterial
-    //     attach="material"
-    //     uniforms={{
-    //       uAudioFrequency: { value: 0 }, // Uniform для частоты
-    //     }}
-    //   />
-    // </mesh>
   );
 };

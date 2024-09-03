@@ -11,13 +11,11 @@ import {
   Vignette,
   Glitch,
 } from "@react-three/postprocessing";
-import * as Tone from "tone";
-import { Howl } from "howler";
-import ReactHowler from "react-howler";
 import track from "/music/track.mp3";
 import pribil from "/music/pribil.mp3";
+import wae from "/music/wae.mp3";
+import platina from "/music/platina!.mp3";
 
-import { Analyzer } from "./components/Analyzer";
 import { AudioVisualizer } from "./components/Visualizer";
 
 import {
@@ -34,7 +32,6 @@ import {
 function MovingSpot({ vec = new THREE.Vector3(), intensity = 20, ...props }) {
   const light = useRef();
   const viewport = useThree((state) => state.viewport);
-  // const [lightIntensity, setLightIntensity] = useState(10);
 
   useFrame((state) => {
     light.current.target.position.lerp(
@@ -70,76 +67,18 @@ export const SceneThree = () => {
   );
 
   const pointLightRef = useRef();
-  const sound = useRef();
-
-  const [lightIntensity, setLightIntensity] = useState(10);
-
-  // const sound = useLoader(THREE.AudioLoader, track);
-  // const audioListener = useRef(null);
-  // const audioLoader = useRef(new THREE.AudioLoader());
-  // const audio = useRef(null);
-
-  // useEffect(() => {
-  //   // Создаем AudioListener
-  //   audioListener.current = new THREE.AudioListener();
-
-  //   // Загружаем аудио файл
-  //   audioLoader.current.load(track, (buffer) => {
-  //     audio.current = new THREE.Audio(audioListener.current);
-  //     audio.current.setBuffer(buffer);
-  //     audio.current.play();
-  //     console.log("audio: , ", audio.current);
-  //     // Очищаем обработчик
-  //     return () => {
-  //       audio.current.stop();
-  //     };
-  //   });
-  // }, []);
-
-  // const analyser = useRef();
-
-  // useEffect(() => {
-  //   if (audio.current) {
-  //     console.log("ready");
-  //     analyser.current = new THREE.AudioAnalyser(audio.current, 32);
-  //   }
-  // }, [audio]);
-  // useFrame(() => {
-
-  //     const data = analyser.current.getAverageFrequency();
-  //     console.log(data);
-  //     // mesh.current.material.color.setRGB(data / 100, 0, 0);
-  //     // mesh.current.scale.x =
-  //     //   mesh.current.scale.y =
-  //     //   mesh.current.scale.z =
-  //     //     (data / 100) * 2;
-  //   }
-  // });
 
   useFrame((state, delta) => {
     const elapsedTime = state.clock.getElapsedTime();
     if (pointLightRef.current) {
       pointLightRef.current.position.x = Math.sin(elapsedTime) * 1.8;
       pointLightRef.current.position.z = Math.cos(elapsedTime) * 1.8;
-
-      // blicking
-      // pointLightRef.current.intensity = Math.random() > 0.995 ? 1 : 0;
     }
-
-    // if (analyser.current) {
-    //   const data = analyser.current.getAverageFrequency();
-    //   console.log("data: ", data);
-    //   // mesh.current.material.color.setRGB(data / 100, 0, 0);
-    //   // mesh.current.scale.x =
-    //   //   mesh.current.scale.y =
-    //   //   mesh.current.scale.z =
-    //   //     (data / 100) * 2;
-    // }
   });
 
   return (
     <Suspense fallback={<>loading...</>}>
-      <AudioVisualizer path={track} />
+      <AudioVisualizer path={wae} />
 
       {/* <Analyzer sound={sound} /> */}
       {/* <PositionalAudio autoplay url={track} ref={sound} /> */}
@@ -212,16 +151,6 @@ export const SceneThree = () => {
 function App() {
   return (
     <>
-      {/* <ReactHowler
-        onLoad={(value) => {
-          // setAudio(value);
-        }}
-        ref={(ref) => {
-          audio.current = ref;
-        }}
-        src={track}
-        playing={true}
-      /> */}
       <Canvas
         shadows
         dpr={[1, 2]}
