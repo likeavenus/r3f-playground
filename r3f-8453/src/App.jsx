@@ -33,6 +33,7 @@ import {
   PositionalAudio,
 } from "@react-three/drei";
 import { Overlay } from "./components/Overlay/Overlay";
+import { TV } from "./components/TV/TV";
 
 const center = new THREE.Vector3(0, 0, 0);
 
@@ -100,6 +101,8 @@ export const SceneThree = () => {
   return (
     <Suspense fallback={<>loading...</>}>
       <AudioVisualizer path={wae} />
+
+      <TV />
 
       {/* <Analyzer sound={sound} /> */}
       {/* <PositionalAudio autoplay url={track} ref={sound} /> */}
