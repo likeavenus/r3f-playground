@@ -12,6 +12,10 @@ import * as THREE from "three";
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
+import { useControls } from "leva";
+import { slideAtom } from "./Overlay/Overlay";
+
+import { CameraHandler } from "./CameraHandler/CameraHandler";
 
 const torusGeometry = new THREE.TorusGeometry(1, 0.6, 16, 32);
 const material = new THREE.MeshMatcapMaterial();
@@ -34,10 +38,17 @@ export const Experience = () => {
   // }
   // });
 
+  const { slideDistance } = useControls({
+    slideDistance: {
+      value: 1,
+      min: 0,
+      max: 10,
+    },
+  });
+
   return (
     <>
-      {/* <Center> */}
-
+      {/* <CameraHandler slideDistance={slideDistance} /> */}
       <RigidBody restitution={1}>
         <Text3D
           castShadow
@@ -78,14 +89,6 @@ export const Experience = () => {
           <meshMatcapMaterial matcap={matCapTexture} />
         </Text3D>
       </RigidBody>
-
-      {/* </Center> */}
-      {/* <RigidBody type="fixed">
-        <Box receiveShadow position={[0, -2, 0]} color="springgreen">
-          <boxGeometry args={[10, 0.2, 10]} />
-          <meshStandardMaterial color="gray" />
-        </Box>
-      </RigidBody> */}
 
       {/* {[...Array(100)].map((value, index) => (
         <mesh

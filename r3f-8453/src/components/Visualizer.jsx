@@ -1,14 +1,7 @@
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { Icosahedron, Sphere } from "@react-three/drei";
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  useMemo,
-  useLayoutEffect,
-} from "react";
-import * as Tone from "tone";
+import { Sphere } from "@react-three/drei";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import fragmentShader from "../shaders/sphere/fragment.glsl";
 import vertexShader from "../shaders/sphere/vertex.glsl";
 

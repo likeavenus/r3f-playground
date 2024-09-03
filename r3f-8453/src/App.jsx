@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { Canvas, useThree, useFrame, useLoader } from "@react-three/fiber";
-import { Experience } from "./components/Experience";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Suspense, useRef, useEffect, useState } from "react";
 import {
@@ -11,10 +10,14 @@ import {
   Vignette,
   Glitch,
 } from "@react-three/postprocessing";
+import { slideAtom } from "./components/Overlay/Overlay";
+
+import { Experience } from "./components/Experience";
 import track from "/music/track.mp3";
 import pribil from "/music/pribil.mp3";
 import wae from "/music/wae.mp3";
 import platina from "/music/platina!.mp3";
+import god from "/music/god.mp3";
 
 import { AudioVisualizer } from "./components/Visualizer";
 
@@ -28,6 +31,7 @@ import {
   useGLTF,
   PositionalAudio,
 } from "@react-three/drei";
+import { Overlay } from "./components/Overlay/Overlay";
 
 function MovingSpot({ vec = new THREE.Vector3(), intensity = 20, ...props }) {
   const light = useRef();
@@ -66,7 +70,12 @@ export const SceneThree = () => {
     "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/dragon/model.gltf"
   );
 
+  const [slide, setSlide] = useState(slideAtom);
   const pointLightRef = useRef();
+
+  console.log(slide);
+
+  const camera = useThree((state) => state.camera);
 
   useFrame((state, delta) => {
     const elapsedTime = state.clock.getElapsedTime();
@@ -74,7 +83,18 @@ export const SceneThree = () => {
       pointLightRef.current.position.x = Math.sin(elapsedTime) * 1.8;
       pointLightRef.current.position.z = Math.cos(elapsedTime) * 1.8;
     }
+
+    camera.lookAt(0, 0, 0);
+    camera.position.set(
+      Math.sin(elapsedTime) * 1.8,
+      0,
+      Math.cos(elapsedTime) * 1.8
+    );
+    camera.updateProjectionMatrix();
+    //   // camera.current.position.z = Math.cos(elapsedTime) * 1.8;
   });
+
+  console.log(camera);
 
   return (
     <Suspense fallback={<>loading...</>}>
@@ -151,6 +171,8 @@ export const SceneThree = () => {
 function App() {
   return (
     <>
+      {/* <Overlay /> */}
+      {/* подключить библиотеку анимаций для плавной анимации камеры к точкам интереса */}
       <Canvas
         shadows
         dpr={[1, 2]}
