@@ -1,6 +1,7 @@
 // #define PI 3.14159265358979
 
 uniform float uTime;
+uniform float uAudioFrequency;
 // varying vec2 vUv;
 varying float vPattern;
 
@@ -45,14 +46,16 @@ struct Color {
 
 void main() {
     vec3 color;
-    float time = uTime;
+    float time = uTime * (1.0 + uAudioFrequency);
 
     // Color[3] colors = Color[](
     //     Color(vec3(0), 0.0),
     //     Color(vec3(0, 1, 0), 0.5),
     //     Color(vec3(1), 1.0)
     // );
-    vec3 mainColor = vec3(0.1, 0.2, 0.9);
+    // vec3 mainColor = vec3(0.1, 0.2, 0.9);
+    vec3 mainColor = mix(vec3(0.2, 0.3, 0.9), vec3(0.4, 1.0, 0.3), uAudioFrequency);
+
 
     mainColor.r *= 0.9 + sin(time) / 3.2;
     mainColor.g *= 1.1 + cos(time / 2.0) / 2.5;

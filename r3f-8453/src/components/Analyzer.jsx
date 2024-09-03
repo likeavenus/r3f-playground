@@ -9,8 +9,8 @@ import React, {
   useLayoutEffect,
 } from "react";
 import * as Tone from "tone";
-import fragmentShader from "../shaders/fragment.glsl";
-import vertexShader from "../shaders/vertex.glsl";
+import fragmentShader from "../shaders/sphere/fragment.glsl";
+import vertexShader from "../shaders/sphere/vertex.glsl";
 import { Visualizer } from "./Visualizer";
 import { AudioVisualizer } from "./Visualizer";
 
@@ -59,7 +59,6 @@ export const Analyzer = ({ sound }) => {
   });
 
   const geometry = useMemo(() => new THREE.SphereGeometry(1, 100, 100));
-  const lineSegmentsRef = useRef();
 
   //   useEffect(() => {
   //     if (lineSegmentsRef.current) {
@@ -75,7 +74,6 @@ export const Analyzer = ({ sound }) => {
     //   <meshStandardMaterial />
     // </Icosahedron>
     <>
-      <AudioVisualizer path={track} />
       <Sphere ref={mesh} args={[1, 64, 64]} position={[0, 1, 0]}>
         <shaderMaterial
           vertexShader={vertexShader}

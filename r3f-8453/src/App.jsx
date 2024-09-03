@@ -9,12 +9,16 @@ import {
   EffectComposer,
   Noise,
   Vignette,
+  Glitch,
 } from "@react-three/postprocessing";
 import * as Tone from "tone";
 import { Howl } from "howler";
 import ReactHowler from "react-howler";
 import track from "/music/track.mp3";
+import pribil from "/music/pribil.mp3";
+
 import { Analyzer } from "./components/Analyzer";
+import { AudioVisualizer } from "./components/Visualizer";
 
 import {
   CameraControls,
@@ -135,8 +139,10 @@ export const SceneThree = () => {
 
   return (
     <Suspense fallback={<>loading...</>}>
-      <Analyzer sound={sound} />
-      <PositionalAudio autoplay url={track} ref={sound} />
+      <AudioVisualizer path={track} />
+
+      {/* <Analyzer sound={sound} /> */}
+      {/* <PositionalAudio autoplay url={track} ref={sound} /> */}
       <CameraControls />
       <Physics debug={false}>
         <Experience />
@@ -172,14 +178,14 @@ export const SceneThree = () => {
         intensity={20}
       />
 
-      <pointLight
+      {/* <pointLight
         castShadow
         ref={pointLightRef}
         intensity={0.5}
         position={[0, 0, 0]}
         // color="darkgreen"
-      />
-      <Grid position={[0, 1, 0]} />
+      /> */}
+      {/* <Grid position={[0, 1, 0]} /> */}
       <EffectComposer>
         {/* <DepthOfField
           focusDistance={0}
@@ -190,6 +196,14 @@ export const SceneThree = () => {
         {/* <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} /> */}
         {/* <Noise opacity={0.02} /> */}
         {/* <Vignette eskil={false} offset={0.1} darkness={1.1} /> */}
+        {/* <Glitch
+          delay={[1.5, 3.5]} // min and max glitch delay
+          duration={[0.6, 1.0]} // min and max glitch duration
+          strength={[0.3, 1.0]} // min and max glitch strength
+          // mode={GlitchMode.SPORADIC} // glitch mode
+          active // turn on/off the effect (switches between "mode" prop and GlitchMode.DISABLED)
+          ratio={0.85} // Threshold for strong glitches, 0 - no weak glitches, 1 - no strong glitches.
+        /> */}
       </EffectComposer>
     </Suspense>
   );

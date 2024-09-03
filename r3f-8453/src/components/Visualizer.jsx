@@ -1,15 +1,31 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
-import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { Icosahedron, Sphere } from "@react-three/drei";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useLayoutEffect,
+} from "react";
+import * as Tone from "tone";
+import fragmentShader from "../shaders/sphere/fragment.glsl";
+import vertexShader from "../shaders/sphere/vertex.glsl";
+
+import track from "/music/track.mp3";
+import gsap from "gsap";
+
+const WIREFRAME_DELTA = 0.015;
 
 export class Visualizer {
   constructor(mesh, frequencyUniformName) {
     this.mesh = mesh;
     this.frequencyUniformName = frequencyUniformName;
-    console.log("class init");
     this.listener = new THREE.AudioListener();
     this.mesh.add(this.listener);
+    this.mesh.material.uniforms[this.frequencyUniformName] = {
+      value: 0,
+    };
 
     this.sound = new THREE.Audio(this.listener);
     this.loader = new THREE.AudioLoader();
@@ -18,11 +34,10 @@ export class Visualizer {
   }
 
   async load(path) {
-    console.log("load init");
     this.loader.load(path, (buffer) => {
       this.sound.setBuffer(buffer);
       this.sound.setLoop(true);
-      this.sound.setVolume(0.5);
+      //   this.sound.setVolume(0.5);
       this.sound.play();
     });
   }
@@ -32,8 +47,18 @@ export class Visualizer {
   }
 
   update() {
-    const freq = Math.max(this.getFrequency() - 100, 0) / 50;
-    // console.log(freq);
+    const freq = Math.max(this.getFrequency() - 100, 0) / 100;
+    this.mesh.material.uniforms[this.frequencyUniformName].value = freq;
+
+    const freqUniform = this.mesh.material.uniforms[this.frequencyUniformName];
+
+    gsap.to(freqUniform, {
+      duration: 1.5,
+      ease: "Slow.easeOut",
+      value: freq,
+    });
+
+    freqUniform.value = freq;
   }
 }
 
@@ -41,7 +66,16 @@ export const AudioVisualizer = ({ path }) => {
   const meshRef = useRef(null); // Ссылка на объект Three.js
   const [visualizer, setVisualizer] = useState(null); // Состояние для Visualizer
 
-  console.log("Render");
+  const uniforms = useMemo(() => {
+    return {
+      uTime: {
+        value: 0,
+      },
+      uAudioFrequency: {
+        value: 0.0,
+      },
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -52,43 +86,70 @@ export const AudioVisualizer = ({ path }) => {
         );
 
         await newVisualizer.load(path);
-        console.log("setState");
-
         setVisualizer(newVisualizer);
       }
     })();
   }, [meshRef.current]);
 
-  //   useEffect(() => {
-  //     (async () => {
-  //       // Создаем Visualizer после загрузки объекта Three.js
-  //       if (meshRef.current && !visualizer) {
-  //         const newVisualizer = new Visualizer(
-  //           meshRef.current,
-  //           "uAudioFrequency"
-  //         ); // Передайте название uniform-переменной
-  //         await newVisualizer.load(path); // Загрузите аудио файл
-  //         setVisualizer(newVisualizer);
-  //       }
-  //     })();
-  //   }, [meshRef.current]);
-
   //   Обновляем визуализацию на каждом кадре
-  useFrame(() => {
+  useFrame((state) => {
     if (visualizer) {
       visualizer.update();
+
+      const time = state.clock.getElapsedTime();
+
+      meshRef.current.material.uniforms.uTime.value = time;
+
+      meshRef.current.position.x = Math.sin(time) + 1;
+      meshRef.current.position.z = Math.cos(time) + 1;
+
+      //   light.current.intensity =
+      //     Math.random() > 0.95
+      //       ? meshRef.current.material.uniforms["uAudioFrequency"].value * 20
+      //       : 0;
+      light.current.intensity =
+        meshRef.current.material.uniforms["uAudioFrequency"].value + 1;
+      //   meshRef.current.material.uniforms["uAudioFrequency"].value * 10;
+      //   light.current.color =
     }
   });
 
+  const light = useRef();
+
   return (
-    <mesh ref={meshRef}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshBasicMaterial
-        attach="material"
-        uniforms={{
-          uAudioFrequency: { value: 0 }, // Uniform для частоты
-        }}
+    <Sphere
+      scale={[0.7, 0.7, 0.7]}
+      ref={meshRef}
+      args={[1, 64, 64]}
+      position={[0, 2, 0]}
+    >
+      <pointLight castShadow intensity={15} ref={light} color="white" />
+      <shaderMaterial
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        uniforms={uniforms}
       />
-    </mesh>
+      <lineSegments
+        ref={meshRef}
+        scale={[1 + WIREFRAME_DELTA, 1 + WIREFRAME_DELTA, 1 + WIREFRAME_DELTA]}
+      >
+        {/* <edgesGeometry attach="geometry" args={[geometry]} /> */}
+        <sphereGeometry attach="geometry" />
+        <shaderMaterial
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          uniforms={uniforms}
+        />
+      </lineSegments>
+    </Sphere>
+    // <mesh ref={meshRef}>
+    //   <boxGeometry args={[1, 1, 1]} />
+    //   <meshBasicMaterial
+    //     attach="material"
+    //     uniforms={{
+    //       uAudioFrequency: { value: 0 }, // Uniform для частоты
+    //     }}
+    //   />
+    // </mesh>
   );
 };
