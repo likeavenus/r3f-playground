@@ -93,8 +93,8 @@ export const AudioVisualizer = ({ path }) => {
 
       meshRef.current.material.uniforms.uTime.value = time;
 
-      meshRef.current.position.x = Math.sin(time) + 1;
-      meshRef.current.position.z = Math.cos(time) + 1;
+      //   meshRef.current.position.x = Math.sin(time) + 1;
+      //   meshRef.current.position.z = Math.cos(time) + 1;
 
       light.current.intensity =
         meshRef.current.material.uniforms["uAudioFrequency"].value *

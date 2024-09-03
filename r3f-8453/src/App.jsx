@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Canvas, useThree, useFrame, useLoader } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Suspense, useRef, useEffect, useState } from "react";
 import {
@@ -32,6 +33,8 @@ import {
   PositionalAudio,
 } from "@react-three/drei";
 import { Overlay } from "./components/Overlay/Overlay";
+
+const center = new THREE.Vector3(0, 0, 0);
 
 function MovingSpot({ vec = new THREE.Vector3(), intensity = 20, ...props }) {
   const light = useRef();
@@ -75,7 +78,7 @@ export const SceneThree = () => {
 
   console.log(slide);
 
-  const camera = useThree((state) => state.camera);
+  // const camera = useThree((state) => state.camera);
 
   useFrame((state, delta) => {
     const elapsedTime = state.clock.getElapsedTime();
@@ -94,15 +97,13 @@ export const SceneThree = () => {
     //   // camera.current.position.z = Math.cos(elapsedTime) * 1.8;
   });
 
-  console.log(camera);
-
   return (
     <Suspense fallback={<>loading...</>}>
       <AudioVisualizer path={wae} />
 
       {/* <Analyzer sound={sound} /> */}
       {/* <PositionalAudio autoplay url={track} ref={sound} /> */}
-      <CameraControls />
+      {/* <CameraControls /> */}
       <Physics debug={false}>
         <Experience />
         <RigidBody>
@@ -168,6 +169,28 @@ export const SceneThree = () => {
   );
 };
 
+function Controls() {
+  const { gl, camera } = useThree();
+
+  // useSpring({
+  //   from: {
+  //     z: 300,
+  //   },
+  //   z: 2,
+  //   onFrame: ({ z }) => {
+  //     camera.position.z = z;
+  //   },
+  // });
+
+  return (
+    <OrbitControls
+      autoRotate
+      target={[0, 0, 0]}
+      args={[camera, gl.domElement]}
+    />
+  );
+}
+
 function App() {
   return (
     <>
@@ -175,9 +198,16 @@ function App() {
       {/* подключить библиотеку анимаций для плавной анимации камеры к точкам интереса */}
       <Canvas
         shadows
-        dpr={[1, 2]}
-        camera={{ position: [-2, 2, 6], fov: 50, near: 1, far: 20 }}
+        // dpr={[1, 2]}
+        // camera={{
+        //   position: [-2, 2, 6],
+        //   fov: 50,
+        //   near: 1,
+        // far: 20,
+        // lookAt: center,
+        // }}
       >
+        <Controls />
         <color attach="background" args={["#202020"]} />
         <fog attach="fog" args={["#202020", 5, 20]} />
         {/* <ambientLight intensity={0.015} /> */}
