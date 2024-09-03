@@ -84,13 +84,13 @@ export const SceneThree = () => {
       pointLightRef.current.position.z = Math.cos(elapsedTime) * 1.8;
     }
 
-    camera.lookAt(0, 0, 0);
-    camera.position.set(
-      Math.sin(elapsedTime) * 1.8,
-      0,
-      Math.cos(elapsedTime) * 1.8
-    );
-    camera.updateProjectionMatrix();
+    // camera.lookAt(0, 0, 0);
+    // camera.position.set(
+    //   Math.sin(elapsedTime) * 1.8,
+    //   0,
+    //   Math.cos(elapsedTime) * 1.8
+    // );
+    // camera.updateProjectionMatrix();
     //   // camera.current.position.z = Math.cos(elapsedTime) * 1.8;
   });
 
